@@ -25,38 +25,75 @@ $datastore = new DatastoreClient([
     'projectId' => $projectId
 ]);
 
-$query = $datastore->query()->kind('user');
 
 $username = $_POST['username'];
 $id= $_POST['id'];
+$password = $_POST['password'];
+
+$query1 = $datastore->query()
+       ->kind('user');
+
+$result1 = $datastore->runQuery($query1);
 
 
 $query = $datastore->query()
 ->kind('user')
-->filter('__key__', '>', $datastore->key('user', $id));
+->filter('username', '=', $username);
+
 
 $result = $datastore->runQuery($query);
 
-if( isset($username) && isset($id) && !(array_key_exists('username', $_POST) || array_key_exists('id', $_POST)) ){
-   echo "<h3>ID and Password cannot be empty</h3>";
-}
+if (isset($result1)) {
+   foreach ($result1 as $entity){
+      // get the entity id using pathEndIdentifier()
+      if($entity->key()->pathEndIdentifier()==$id){
+            echo "<h3>Id already exists</h3>";
+      }
+  }
 
-elseif ( isset($id) ) {
-
-   foreach ($result as $properties => $users) {
-
-       if (  $id == $users['__key__'] ) {
-           header('Location: /register');
-           echo "<h3>already exists</h3>";
-           die();
-       }
+      // if ($id!=null ) {
+      //    header('Location: /register');
+      //    echo "<h3>already exists</h3>";
+      //    echo "hell0";
+      //     die();
+      // }
    }
 
-   if(  $id != $users['__key__'] ) {
-       echo "created account";
-   }
-}
+      if ( isset($username) ){
+         foreach ($result as $properties => $users) {
 
+            if ($username == $users['username'] ) {
+
+               echo "<h3> Username already exists </h3>";
+            }
+
+         }
+      }
+      if(!(isset($username)  && isset($password) && isset($id)|!(isset($username) |isset($password) | isset($id)))){
+         echo "<h3> Username/Password/id empty</h3>";
+      }
+
+      else{
+            $kind = 'user';
+
+            # The Cloud Datastore key for the new entity
+            $userKey = $datastore->key($kind, $id);
+
+            # Prepares the new entity
+            $user= $datastore->entity($userKey, ['username' => $username,'password' => $password]);
+            $datastore->upsert($user);
+
+            header('Location: https://s3781183-cc2021.ts.r.appspot.com');
+            exit();
+      }
+   // }
+
+
+
+
+// if( isset($username) && isset($id) && !(array_key_exists('username', $_POST) || array_key_exists('id', $_POST)) ){
+//    echo "<h3>ID and Password cannot be empty</h3>";
+// }
 
 ?>
     <form action="" method="post" ame="registration">

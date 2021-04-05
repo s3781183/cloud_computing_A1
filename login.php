@@ -25,7 +25,6 @@ $datastore = new DatastoreClient([
     'projectId' => $projectId
 ]);
 
-$query = $datastore->query()->kind('user');
 
 $username = $_POST['username'];
 $password = $_POST['password'];
