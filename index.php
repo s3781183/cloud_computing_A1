@@ -27,24 +27,6 @@ $user0= $datastore->entity($userKey0, ['username' => 'Ruchelle Balasuriya0','pas
 # Saves the entity
 $datastore->upsert($user0);
 
-# The Cloud Datastore key for the new entity
-$userKey1 = $datastore->key($kind, 's37811831');
-
-# Prepares the new entity
-$user1= $datastore->entity($userKey1, ['username' => 'Ruchelle Balasuriya1','password' => '234567']);
-
-# Saves the entity
-$datastore->upsert($user1);
-
-# The Cloud Datastore key for the new entity
-$userKey2 = $datastore->key($kind, 's37811832');
-
-# Prepares the new entity
-$user2= $datastore->entity($userKey2, ['username' => 'Ruchelle Balasuriya2','password' => '456789']);
-
-# Saves the entity
-$datastore->upsert($user2);
-
 
 
 
@@ -58,6 +40,9 @@ switch (@parse_url($_SERVER['REQUEST_URI'])['path']) {
     case '/forum':
         require 'forum.php';
         break;
+    case '/user':
+        require 'userpage.php';
+        break;
     default:
         http_response_code(404);
         exit('Not Found');
@@ -65,13 +50,13 @@ switch (@parse_url($_SERVER['REQUEST_URI'])['path']) {
 
 
 
-$storage = new StorageClient();
+// $storage = new StorageClient();
 
-$bucket = $storage->bucket('s3781183-cc2021.appspot.com'); // Put your bucket name here.
+// $bucket = $storage->bucket('s3781183-cc2021.appspot.com'); // Put your bucket name here.
 
-$object = $bucket->upload(file_get_contents($filePath), [
-    'name' => $objectName
-]);
+// $object = $bucket->upload(file_get_contents($filePath), [
+//     'name' => $objectName
+// ]);
 
 ?>
 

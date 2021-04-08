@@ -1,3 +1,11 @@
+<?php
+// Start the session
+session_start();
+?>
+<!DOCTYPE html>
+
+
+
 
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
@@ -10,6 +18,7 @@
 
 <html>
 <body>
+
 <?php
 
 require __DIR__ . '/vendor/autoload.php';
@@ -37,39 +46,31 @@ $query = $datastore->query()
 
 $result = $datastore->runQuery($query);
 
-if( isset($username) && isset($password) && !(array_key_exists('username', $_POST) || array_key_exists('password', $_POST)) ){
-   echo "<h3>ID and Password cannot be empty</h3>";
-}
+if( isset($username) && isset($password)){
+   if(empty($username) || empty($password)){
+      echo "<h3>All fields required</h3>";}
 
-elseif ( isset($username) && isset($password) ) {
+   else{
+      foreach ($result as $properties => $users) {
 
-   foreach ($result as $properties => $users) {
+         if ( $username == $users['username']  &&  $password == $users['password'] ) {
+             $_SESSION['username'] = $username;
+           if(isset($_SESSION['username']))
+              echo '<script language=javascript>window.location.href="/forum"</script>';
+              exit();
+         }
+     }
 
-       if ( $username == $users['username']  &&  $password == $users['password'] ) {
-           $_SESSION['authenticated'] = $users['username'];
-           $_SESSION['name'] = $users['name'];
-           header('Location: /forum');
-           echo "<h3>Correct!</h3>";
-           die();
-       }
-   }
-
-   if( $username != $users['username']  &&  $password != $users['password'] ) {
-       echo "<h3>Incorrect Password or ID</h3>";
+     echo "<h3>ID or password is invalid</h3>";
    }
 }
 
-// if (array_key_exists('password', $_POST)) { 
-//    echo "You wrote:<pre>\n";
-//    echo htmlspecialchars($_POST['password']); 
-//    echo "\n</pre>";
-// }
 ?>
     <form action="" method="post" name="login">
                            <div class="form-group">
                               <label for="exampleInputEmail1">Id</label>
                               <input type="username" name="username"  class="form-control" id="username" aria-describedby="emailHelp" placeholder="Enter email">
-                           </div>
+      </div>
                            <div class="form-group">
                               <label for="exampleInputEmail1">Password</label>
                               <input type="password" name="password" id="password"  class="form-control" aria-describedby="emailHelp" placeholder="Enter Password">
